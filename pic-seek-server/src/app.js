@@ -5,6 +5,8 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const logger = require('./middleware/logger');
+const getImageBuffer = require('./utils/ai/getImageBuffer');
+const generateImageUrl = require('./utils/ai/generateImageURL');
 
 //middleware
 app.use(cors())
@@ -22,9 +24,24 @@ app.post('/create-image', async (req, res) => {
             status: 400,
             message: "Please provide email, prompt, username, userImg,  category",
         })
+
+        //1. create a final prompt
+        //2. generate image buffer
+        const buffer = await getImageBuffer(prompt, category)
+
+        //3. upload image and get url
+        const data = await generateImageUrl(buffer, prompt);
+        res.send(data)
+
         return;
     }
     res.send({})
+
+
+
+    //4. insert data in mongodb
+    //5. send response
+
 })
 
 

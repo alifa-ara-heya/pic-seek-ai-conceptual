@@ -2,10 +2,11 @@ import { useContext } from "react";
 import PageTitle from "../components/shared/PageTitle";
 import { AuthContext } from "../provider/AuthProvider";
 import Swal from "sweetalert2";
+import axios from 'axios';
 
 const Create = () => {
   const { user, login } = useContext(AuthContext);
-  const imgbbApi = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API}`
+  // const imgbbApi = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API}`
   const options = [
     "painting",
     "animated-image",
@@ -76,7 +77,7 @@ const Create = () => {
   }
 
 
-  const getImageBuffer = async (prompt, category) => {
+  /* const getImageBuffer = async (prompt, category) => {
     const finalPrompt = `imagine a ${category} : ${prompt}`;
     console.log(finalPrompt);
     const myForm = new FormData();
@@ -96,21 +97,21 @@ const Create = () => {
     console.log(buffer);
     return buffer
 
-  }
+  } */
 
-  const generateImageUrl = async (buffer, prompt) => {
-    const formData = new FormData();
-    formData.append('image', new Blob([buffer], { type: 'image/jpeg' }), `${prompt}.jpg`)
-
-    const response = await fetch(imgbbApi, {
-      method: 'POST',
-      body: formData
-    })
-
-    const data = await response.json()
-    return data
-
-  }
+  /*   const generateImageUrl = async (buffer, prompt) => {
+      const formData = new FormData();
+      formData.append('image', new Blob([buffer], { type: 'image/jpeg' }), `${prompt}.jpg`)
+  
+      const response = await fetch(imgbbApi, {
+        method: 'POST',
+        body: formData
+      })
+  
+      const data = await response.json()
+      return data
+  
+    } */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -150,14 +151,22 @@ const Create = () => {
     //validation End */
     console.log({ prompt, category });
 
-    const buffer = await getImageBuffer(prompt, category);
-    const data = await generateImageUrl(buffer, prompt);
-    console.log(data);
+    // const buffer = await getImageBuffer(prompt, category);
+    // const data = await generateImageUrl(buffer, prompt);
+    // console.log(data);
     // const blob = new Blob([buffer], { type: 'image/jpeg' });
     // const url = URL.createObjectURL(blob);
     // console.log(url);
 
+    axios.post("http://localhost:5000/create-image", {
+      email: user?.email,
+      prompt,
+      category,
+      username: user?.displayName || 'Anonymous',
+      userImg: user?.photoURL || 'https://img.icons8.com/?size=96&id=z-JBA_KtSkxG&format=png',
 
+
+    })
 
   };
   return (
